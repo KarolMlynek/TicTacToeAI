@@ -1,8 +1,6 @@
 class Board:
     def __init__(self,):
         self.board = [["   ", "   ", "   "], ["   ", "   ", "   "], ["   ", "   ", "   "]]
-        self.coordX = 0
-        self.coordY = 0
         self.is_full = False
 
     def show_board(self):
