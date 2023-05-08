@@ -4,12 +4,11 @@ from random import randint
 
 class Game:
 
-    def __init__(self, board, is_full):
+    def __init__(self, board):
         self.board = board
         self.round_counter = 0
         self.player_win = False
         self.computer_win = False
-        self.is_full = is_full
 
     def player_move(self):
         is_move_valid = False
@@ -24,42 +23,39 @@ class Game:
             self.board[coordinate_x][coordinate_y] = " X "
             self.round_counter += 1
         else:
+            print(self.get_best_move())
             move = self.get_best_move()
             self.board[move[0]][move[1]] = " O "
             self.round_counter += 1
+    def end_game(self):
+        if self.get_winner(" X "):
+            print("You win!")
+            exit()
+        elif self.get_winner(" O "):
+            print("Computer win!")
+            exit()
+        elif self.check_draw():
+            print("It is a draw!")
+            exit()
 
-    def get_winner(self):
-        player1 = [0] * 6
-        computer = [0] * 6
-        for row in range(3):
-            for element in range(3):
-                if self.board[row][element] == " X ":
-                    player1[element] += 1
-                    player1[row + 3] += 1
-                if self.board[row][element] == " O ":
-                    computer[element] += 1
-                    computer[row + 3] += 1
-                element += 1
-            row += 1
-        for i in range(len(player1)):
-            if player1[i] == 3:
-                self.player_win = True
-                print("Player1 won!")
-                exit()
-            else:
-                if all(el >= 1 for el in player1) and self.board[1][1] == " X ":
-                    self.player_win = True
-                    print("Player1 won!")
-                    exit()
-            if computer[i] == 3:
-                self.computer_win = True
-                print("Player2 won!")
-                exit()
-            else:
-                if all(el >= 1 for el in computer) and self.board[1][1] == " O ":
-                    self.computer_win = True
-                    print("Player2 won!")
-                    exit()
+    def get_winner(self, player):
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] == player:
+                return True
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] == player:
+                return True
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] == player:
+            return True
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] == player:
+            return True
+        return False
+
+    def check_draw(self):
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == "   ":
+                    return False
+        return True
 
     def starting_player(self):
         self.round_counter = randint(0, 1)
@@ -69,31 +65,30 @@ class Game:
             print("Computer goes first!")
 
     def minimax(self, depth, is_maximizing):
-        if self.player_win:
+        if self.get_winner(" X "):
             return -10
-        elif self.computer_win:
+        elif self.get_winner(" O "):
             return 10
-        elif self.is_full:
+        elif self.check_draw():
             return 0
-
         if is_maximizing:
             best_score = -math.inf
             for i in range(3):
                 for j in range(3):
-                    if self.board[i][j] == '   ':
-                        self.board[i][j] = ' O '
+                    if self.board[i][j] == "   ":
+                        self.board[i][j] = " O "
                         score = self.minimax(depth+1, False)
-                        self.board[i][j] = '   '
+                        self.board[i][j] = "   "
                         best_score = max(score, best_score)
             return best_score
         else:
             best_score = math.inf
             for i in range(3):
                 for j in range(3):
-                    if self.board[i][j] == '   ':
-                        self.board[i][j] = ' X '
+                    if self.board[i][j] == "   ":
+                        self.board[i][j] = " X "
                         score = self.minimax(depth+1, True)
-                        self.board[i][j] = '   '
+                        self.board[i][j] = "   "
                         best_score = min(score, best_score)
             return best_score
 
@@ -102,11 +97,12 @@ class Game:
         best_move = []
         for i in range(3):
             for j in range(3):
-                if self.board[i][j] == '   ':
-                    self.board[i][j] = ' O '
+                if self.board[i][j] == "   ":
+                    self.board[i][j] = " O "
                     score = self.minimax(0, False)
-                    self.board[i][j] = '   '
+                    self.board[i][j] = "   "
                     if score > best_score:
                         best_score = score
                         best_move = [i, j]
         return best_move
+
