@@ -11,8 +11,8 @@ def main():
     tic_tac_game.starting_player()
     tic_tac_game.minimax(0, True)
     for i in range(9):
+        tic_tac_board.clear_screen()
         if tic_tac_game.round_counter % 2 == 0:
-            #os.system('printf \'\\33c\\e[3J\'')
             tic_tac_board.is_board_full()
             tic_tac_board.show_board()
             tic_tac_game.player_move()
