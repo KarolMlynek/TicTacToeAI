@@ -23,7 +23,6 @@ class Game:
             self.board[coordinate_x][coordinate_y] = " X "
             self.round_counter += 1
         else:
-            print(self.get_best_move())
             move = self.get_best_move()
             self.board[move[0]][move[1]] = " O "
             self.round_counter += 1
